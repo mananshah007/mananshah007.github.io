@@ -1,7 +1,7 @@
 var svg_dom = d3.select("#svg_domain").append('g');
 
     svg_dom.append("svg:image")
-    .attr("xlink:href", "images/web1.png")
+    .attr("xlink:href", "images/Web1.png")
     .attr("width", 100)
     .attr("height", 100)
     .attr("x", 50+100)
