@@ -11,10 +11,17 @@ var svg_dom = d3.select("#svg_domain").append('g');
       .attr("x", 100+100)
       .attr("y", 200)
       .text("Web Development")
+      .attr("text-decoration", "underline")
       .attr("font-size", "20px")
       .attr("text-anchor", "middle")
       .attr("font-family", "Century Gothic")
-        .on('click', displayTags);
+        .on('click', displayTags)
+      .on("mouseover", function(d){
+        d3.select(this).attr("fill", "blue")
+      })
+      .on("mouseout", function(d){
+        d3.select(this).attr("fill", "black")
+      });
 
     svg_dom.append("svg:image")
     .attr("xlink:href", "images/db1.png")
@@ -28,9 +35,16 @@ var svg_dom = d3.select("#svg_domain").append('g');
       .attr("y", 200)
       .text("Database/Data Engineer")
       .attr("font-size", "20px")
+      .attr("text-decoration", "underline")
       .attr("text-anchor", "middle")
       .attr("font-family", "Century Gothic")
-      .on("click", displayTags);
+      .on("click", displayTags)
+      .on("mouseover", function(d){
+        d3.select(this).attr("fill", "blue")
+      })
+      .on("mouseout", function(d){
+        d3.select(this).attr("fill", "black")
+      });
 
     svg_dom.append("svg:image")
     .attr("xlink:href", "images/gears1.png")
@@ -44,9 +58,16 @@ var svg_dom = d3.select("#svg_domain").append('g');
       .attr("y", 450)
       .text("Backend Developer")
       .attr("font-size", "20px")
+      .attr("text-decoration", "underline")
       .attr("text-anchor", "middle")
       .attr("font-family", "Century Gothic")
-      .on("click", displayTags);
+      .on("click", displayTags)
+      .on("mouseover", function(d){
+        d3.select(this).attr("fill", "blue")
+      })
+      .on("mouseout", function(d){
+        d3.select(this).attr("fill", "black")
+      });
 
     svg_dom.append("svg:image")
     .attr("xlink:href", "images/java1.png")
@@ -61,5 +82,12 @@ var svg_dom = d3.select("#svg_domain").append('g');
       .text("Java Developer")
       .attr("font-size", "20px")
       .attr("text-anchor", "middle")
+      .attr("text-decoration", "underline")
       .attr("font-family", "Century Gothic")
-        .on('click', displayTags);
+        .on('click', displayTags)
+      .on("mouseover", function(d){
+        d3.select(this).attr("fill", "blue")
+      })
+      .on("mouseout", function(d){
+        d3.select(this).attr("fill", "black")
+      });

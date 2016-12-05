@@ -1,7 +1,8 @@
 displayTags = (function(){
 
-svg_dom.remove();
+d3.select('#svg_domain').remove();
 
+  var selectedTags = []
 var domainName = d3.select(this).text();
 var margin = {top: 40, right: 10, bottom: 40, left: 10},
     width = 960 - margin.left - margin.right-0,
@@ -36,18 +37,45 @@ d3.csv("Dummy1.csv", function(error, data) {
       .spiral("archimedean")
       .on("end", draw)
       .start();
-  var svg = d3.select("#svg_domain").append("g");
-
+  //var svg = d3.select("#svg_domain").append("g");
+  var svg=d3.select("#main").append("svg").attr("width",960).attr("height",660).append("g");
   var textboxTitle = svg.append("text")
       .attr("x", 0)
-      .attr("y", 410)
+      .attr("y", 490)
       .text("Selected Tags")
       .attr("font-size", "30px")
       .attr("font-family", "Century Gothic");
 
+var ser=  svg.append("text")
+          .attr("x", 860)
+          .attr("y", 537)
+          .text("Search")
+          .attr("text-decoration", "underline")
+          .attr("text-anchor", "middle");
+          ser.on("mouseover", function(){
+            d3.select(this).attr("font-weight", "bold");
+          })
+          ser.on("mouseout", function(){
+            d3.select(this).attr("font-weight", null);
+          })
+          ser.on("click", mainscript);
+
+var ser=  svg.append("text")
+          .attr("x", 860)
+          .attr("y", 537)
+          .text("Search")
+          .attr("text-anchor", "middle")
+          .on("mouseover", function(){
+            d3.select(this).attr("font-weight", "bold");
+          })
+          .on("mouseout", function(){
+            d3.select(this).attr("font-weight", null);
+          })
+          .on("click", mainscript);
+
   svg.append("text")
-      .attr("x", 480)
-      .attr("y", 500)
+      .attr("x", 540)
+      .attr("y", 410)
       .text(domainName)
       .attr("font-weight", "bold")
       .attr("font-size", "45px")
@@ -57,43 +85,119 @@ d3.csv("Dummy1.csv", function(error, data) {
       .attr("font-family", "Century Gothic");
 
   var textbox = svg.append("rect")
-                            .attr("x", 230)
-                            .attr("y", 380)  
+                            .attr("x", 240)
+                            .attr("y", 450)  
                             .attr("width", 680)
                             .attr("height", 50)
                             .attr("fill", "#e4e8e8")
                             .attr("id", "textbox");
+  
+ function mainscript()
+  {d3.select('#main').selectAll('svg').remove();
+  console.log(selectedTags);
+  var r=0,o=0,gc=0;
+var container = d3.select('#main');
+var width = 960,
+    height = 600,
+    radius = 10;
+var svg = container.append("svg")
+    .attr("width", "960")
+    .attr("height", "600");
+//var color = d3.scaleOrdinal(d3.schemeCategory10);
+ var color = d3.scale.ordinal().range(["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854", "#7D3C98", "#B03A2E", "#196F3D","#117864","#f1c40f","#e82b6a"]);
 
-  /*var svg2 = d3.select('body').append("svg")
-      .attr("width", 1180)
-      .attr("height", 70)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+d3.json("users_prof.json", function(error,graph) {
+  if (error) throw error;
+function onclicks()
+{
+  d3.select("#main").selectAll("svg").remove();
+d3.selectAll('circle').style("fill-opacity",0.3);
+t = d3.select(this).node().__data__;
+d3.select(this).style("fill-opacity",1);
+d3.select('#showme').selectAll('svg').remove();
+d3.select('#showme').selectAll('text').remove();
+d3.select('#showme1').selectAll('svg').remove();
+d3.select('#showme1').selectAll('text').remove();
+d3.select('#info').selectAll('text').remove();
+d3.csv("users.csv", function(error, data) 
+{
+    if (error) throw error;
+  data=data.filter(function(d){return d.uid==t.uid});
+   data.forEach(
+    function(d) 
+    { 
+  d3.select('#info').append('text').html("<p><br><br><b>Name: </b>"+d.name+"<br><b> Age: </b>"+d.age+"<br><b> Location:</b> "+d.location+"<br><br><b> Reputation: </b>"+d.rep+"<br><b> Up votes: </b>"+d.up+"<br><b> Down votes: </b>"+d.down+"<br><b> Last Seen </b>"+d.ldate+"<br><b> Website: </b>"+d.web+"<br><br> <b> Personal Summary:</b>"+d.aa+"</p>").style("font-size","16px");
 
-  svg2.append("text")
-      .attr("x", 350)
-      .attr("y", 30)
-      .text(domainName)
-      .attr("font-size", "30px")
-      .attr("font-family", "Helvetica");*/
+  }
+  );
+    
+           
+}
+);
+loadJS2("http://d3js.org/d3.v3.min.js", bar, document.getElementById('showme'),t.uid);
+loadJS2("http://d3js.org/d3.v3.min.js", piechart, document.getElementById('showme1'),t.uid);
+}
+var force = d3.layout.force()
+    .gravity(.25)
+    .distance(250)
+    .charge(-25)
+    .size([width, height]);
+var node = svg.selectAll(".node")
+      .data(graph.nodes).enter().append("g")
+      .attr("class", "node")
+      .call(force.drag);
+    node=node.filter(function(d){
+      var i=0;
+      var flag=1;
+      for(i=0;i<selectedTags.length;i++)
+        {
+          if(d.tags.search(selectedTags[i])==-1)
+          {
+            flag=-1;
+          }
+          else{
+            console.log(d.tags);
+          }
+        }
+        if(flag==1)
+        {
+          if(r<10)
+          {
+          r=r+1;
+          return d;}
+        }
+    
+    })
+    node.append("circle")
+    .style("stroke",function(d){return color(d.group);})
+    .style("stroke-width","3.5px")
+      .attr("r", function(d){return d.reputation/1000+40;})
+      .attr("fill",function(d){return color(d.group);}).style("fill-opacity","0.8");
+    
+  node.on("dblclick",onclicks);
 
-  /*var svg = d3.select('body').append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");*/
+node.append("title").text(function(d) { return 'Reputation: '+d.reputation; }).attr("dx", 10)
+node.append("text").attr("dx", 12)
+      .attr("dy", ".25em")
+      .text(function(d) { return d.name ;}).attr("font-family", "courier new italic");
+  force.on("tick", function() {
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  });
+   
+ force
+      .nodes(graph.nodes)
+      .start();
+ 
+});
 
-/*var svg2 = d3.select('body').append("svg")
-      .attr("width", 220 + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");*/
+
+  }
+
+
 
   var wordcloud = svg.append("g")
       .attr('class','wordcloud')
       .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
-
-
 
   var x0 = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1)
@@ -103,7 +207,6 @@ d3.csv("Dummy1.csv", function(error, data) {
       .scale(x0)
       .orient("bottom");
 
-  var selectedTags = []
   function draw(words) {
     wordcloud.selectAll("text")
         .data(words)
@@ -113,11 +216,8 @@ d3.csv("Dummy1.csv", function(error, data) {
         .style("font-family", function(d) { return d.font; })
         .style("fill", function() { 
           var color = ["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854", "#7D3C98", "#B03A2E"];
-          return color[Math.floor(Math.random()*6)+1]; })
-        /*.style("fill", function(d) { 
-            var paringObject = data.filter(function(obj) { return obj.password === d.text});
-            return color(paringObject[0].category); 
-        })*/  
+          return color[Math.floor(Math.random()*6)+1]; 
+        })
         .attr("text-anchor", "middle")
         .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
         .text(function(d) { return d.text; })
@@ -140,8 +240,8 @@ d3.csv("Dummy1.csv", function(error, data) {
 
                       d3.select("#textbox").remove();
                       svg.append("rect")
-                            .attr("x", 230)
-                            .attr("y", 380)  
+                            .attr("x", 240)
+                            .attr("y", 450)  
                             .attr("width", 680)
                             .attr("height", 50)
                             .attr("fill", "#e4e8e8")
@@ -150,8 +250,8 @@ d3.csv("Dummy1.csv", function(error, data) {
                       {
                         svg.append("text")
                               .text(selectedTags[i])
-                              .attr("x", 240+i*136)
-                              .attr("y", 410)
+                              .attr("x", 245+i*136)
+                              .attr("y", 480)
                               .attr("fill", "black  ")
                               .attr("font-family", "Helvetica").
                               attr("font-size", "15px");
@@ -164,5 +264,6 @@ d3.csv("Dummy1.csv", function(error, data) {
   };
 
 });
-//return selectedTags;
+
+
 });
